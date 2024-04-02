@@ -1,16 +1,18 @@
+import { AddCardBtn } from './AddCardBtn';
+import { ListHeader } from './ListHeader';
+import { QuizForm } from './QuizForm';
+import { SearchBar } from './SearchBar';
+import { ToDoList } from './ToDoList';
+import taskItems from '../task-items.json';
+
 export const App = () => {
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
+    <div>
+      <QuizForm />
+      <SearchBar />
+      <AddCardBtn />
+      <ListHeader />
+      <ToDoList items={taskItems} />
     </div>
   );
 };

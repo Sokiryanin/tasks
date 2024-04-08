@@ -18,7 +18,7 @@ const taskSchema = Yup.object().shape({
     .max(100, 'Too Long!')
     .required('Required'),
   date: Yup.date().required('Required'),
-  level: Yup.string().oneOf(['Low', 'Medium', 'High']).required('Required'),
+  level: Yup.string().oneOf(['low', 'medium', 'high']).required('Required'),
 });
 
 export const TaskForm = ({ onAdd }) => {
@@ -29,7 +29,7 @@ export const TaskForm = ({ onAdd }) => {
           name: '',
           description: '',
           date: '',
-          level: 'Low',
+          level: 'low',
         }}
         validationSchema={taskSchema}
         onSubmit={(values, actions) => {
@@ -58,9 +58,9 @@ export const TaskForm = ({ onAdd }) => {
           <Label>
             Priority:
             <Input as="select" name="level">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
             </Input>
             <ErrorMsg name="level" component="div" />
           </Label>

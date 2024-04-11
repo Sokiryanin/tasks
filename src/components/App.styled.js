@@ -5,14 +5,6 @@ export const StyledSection = styled.section`
   margin: 0 auto;
 `;
 
-export const StyledAddCardBtn = styled.button`
-  width: 100%;
-  border: 1px dashed;
-  padding: 6px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-`;
-
 export const StyledListTasks = styled.ul`
   display: flex;
   flex: wrap;

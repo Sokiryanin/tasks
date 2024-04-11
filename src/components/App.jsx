@@ -2,20 +2,16 @@ import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import initialTaskList from '../task-list.json';
 
-import { TaskForm } from './TaskForm/TaskForm';
+// import { TaskForm } from './TaskForm/TaskForm';
 import { SearchBar } from './SearchBar/SearchBar';
 
 import { TaskCardList } from './TaskCardList/TaskCardList';
 import { ListHeader } from './ListHeader/ListHeader';
 
-import {
-  StyledAddCardBtn,
-  StyledListItems,
-  StyledListTasks,
-  StyledSection,
-} from './App.styled';
+import { StyledListItems, StyledListTasks, StyledSection } from './App.styled';
 
 import { createTask, deleteTaskById, fetchTasks } from 'api';
+import BasicModal from './Modal/Modal';
 
 const getInitialFilters = () => {
   // получаем из localStorage выставленные ранее фильтры
@@ -131,7 +127,6 @@ export const App = () => {
   // };
 
   // Функция для фильтров. Сделал из двух одну
-
   const changeFilters = (value, key) => {
     setFilters(prevFilters => ({
       ...prevFilters,
@@ -149,7 +144,7 @@ export const App = () => {
 
   return (
     <StyledSection>
-      <TaskForm onAdd={addTask} />
+      {/* <TaskForm onAdd={addTask} /> */}
       <SearchBar
         level={filters.level}
         task={filters.task}
@@ -166,7 +161,7 @@ export const App = () => {
               onDeleteList={deleteList}
               cardCount={visibleCards.length}
             />
-            <StyledAddCardBtn>Add new card</StyledAddCardBtn>
+            <BasicModal onAdd={addTask} />
 
             {/* если пустой массив то список карточек не рендерим  */}
             {visibleCards.length > 0 && (

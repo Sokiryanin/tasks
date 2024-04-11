@@ -1,4 +1,4 @@
-import { Formik } from 'formik';
+import { Field, Formik } from 'formik';
 import {
   Label,
   StyledForm,
@@ -29,10 +29,11 @@ export const TaskForm = ({ onAdd }) => {
           name: '',
           description: '',
           date: '',
-          level: 'low',
+          level: '',
         }}
         validationSchema={taskSchema}
         onSubmit={(values, actions) => {
+          console.log(values.level);
           onAdd(values);
           actions.resetForm();
         }}
@@ -57,11 +58,11 @@ export const TaskForm = ({ onAdd }) => {
           </Label>
           <Label>
             Priority:
-            <Input as="select" name="level">
+            <Field as="select" name="level">
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
-            </Input>
+            </Field>
             <ErrorMsg name="level" component="div" />
           </Label>
           <SubmitBtn type="submit">Add new card</SubmitBtn>

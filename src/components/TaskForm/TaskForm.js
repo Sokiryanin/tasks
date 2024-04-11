@@ -64,7 +64,7 @@ export const TaskForm = ({ onAdd }) => {
             </Input>
             <ErrorMsg name="level" component="div" />
           </Label>
-          <SubmitBtn type="submit">Submit</SubmitBtn>
+          <SubmitBtn type="submit">Add new card</SubmitBtn>
         </StyledForm>
       </Formik>
     </>

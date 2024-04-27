@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import initialTaskList from '../task-list.json';
 
-// import { TaskForm } from './TaskForm/TaskForm';
 import { SearchBar } from './SearchBar/SearchBar';
-
 import { TaskCardList } from './TaskCardList/TaskCardList';
 import { ListHeader } from './ListHeader/ListHeader';
-
 import { StyledListItems, StyledListTasks, StyledSection } from './App.styled';
-
-import { createTask, deleteTaskById, fetchTasks } from 'api';
+import { createBoard, deleteBoardById, fetchBoards } from 'api';
 import BasicModal from './Modal/Modal';
+
+import { CreateNewBoard } from './CreateNewBoard/CreateNewBoard';
 
 const getInitialFilters = () => {
   // получаем из localStorage выставленные ранее фильтры
@@ -26,20 +23,21 @@ const getInitialFilters = () => {
 };
 
 export const App = () => {
-  const [taskItems, setTaskItems] = useState([]);
-  const [listItems, setListItems] = useState(initialTaskList);
+  const [boardsItems, setBoardsItems] = useState([]);
+  const [title, setTitle] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [filters, setFilters] = useState(getInitialFilters);
 
   // еффект для вызова всех карточек с бекенда
   useEffect(() => {
-    async function getTasks() {
+    async function getBoards() {
       try {
         setLoading(true);
         setError(false);
-        const tasks = await fetchTasks();
-        setTaskItems(tasks);
+        const boards = await fetchBoards();
+        setBoardsItems(boards);
       } catch (error) {
         setError(true);
       } finally {
@@ -47,7 +45,7 @@ export const App = () => {
       }
     }
 
-    getTasks();
+    getBoards();
   }, []);
 
   // еффект который реагирует на изменения в фильтр
@@ -57,58 +55,97 @@ export const App = () => {
     localStorage.setItem('filters', JSON.stringify(filters));
   }, [filters]);
 
-  // добавление карточек
-  const addTask = async newTask => {
+  // Добавление новой доски
+  const createNewBoardName = evt => {
+    setTitle(evt.target.value);
+  };
+
+  const addBoard = async () => {
     try {
       setLoading(true);
       setError(false);
 
-      const addedTask = await createTask(newTask);
-      setTaskItems(prevItems => [...prevItems, addedTask]);
-      toast.success('Successfully add task');
+      const newBoard = { title, tasks: [] }; // Создаем объект новой доски
+
+      const addedBoard = await createBoard(newBoard); // Отправляем запрос на сервер для создания новой доски
+
+      if (title.length > 1) {
+        setBoardsItems(prevBoardItems => [...prevBoardItems, addedBoard]);
+        setTitle('');
+        toast.success('Successfully add board');
+      }
     } catch (error) {
       setError(true);
     } finally {
       setLoading(false);
     }
   };
+
+  // удаление доски
+  const deleteBoard = async listId => {
+    try {
+      setLoading(true);
+      setError(false);
+      await deleteBoardById(listId);
+      setBoardsItems(prevItems =>
+        prevItems.filter(list => list._id !== listId)
+      );
+      toast.success('Successfully delete board');
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // добавление карточек
+  // const addTask = async newTask => {
+  //   try {
+  //     setLoading(true);
+  //     setError(false);
+
+  //     const addedTask = await createTask(newTask);
+  //     setBoardsItems(prevItems => [...prevItems, addedTask]);
+  //     toast.success('Successfully add task');
+  //   } catch (error) {
+  //     setError(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // удаление карточек
-  const deleteTask = async taskId => {
-    try {
-      setLoading(true);
-      setError(false);
+  // const deleteTask = async taskId => {
+  //   try {
+  //     setLoading(true);
+  //     setError(false);
 
-      const deletedTask = await deleteTaskById(taskId);
-      setTaskItems(prevItems =>
-        prevItems.filter(task => task.id !== deletedTask.id)
-      );
+  //     const deletedTask = await deleteBoardById(taskId);
+  //     setBoards(prevItems =>
+  //       prevItems.filter(task => task._id !== deletedTask.id)
+  //     );
 
-      toast.success('Successfully delete task');
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // удаление списка
-  const deleteList = listId => {
-    setListItems(prevItems => prevItems.filter(list => list.id !== listId));
-  };
+  //     toast.success('Successfully delete task');
+  //   } catch (error) {
+  //     setError(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // отображает только те таски свойство name которых включают в себя введенный taskFilter,
   // а так же возвращает те которые выбраны при помощи селект, изначально показывает все таски.
-  const visibleCards = taskItems.filter(task => {
-    const hasName = task.name
-      .toLowerCase()
-      .includes(filters.task.toLocaleLowerCase());
 
-    if (filters.level === 'all') {
-      return hasName;
-    }
-    return hasName && task.level === filters.level;
-  });
+  // const visibleCards = boards.filter(task => {
+  //   const hasName = task.taskTitle
+  //     .toLowerCase()
+  //     .includes(filters.task.toLocaleLowerCase());
+
+  //   if (filters.level === 'all') {
+  //     return hasName;
+  //   }
+  //   return hasName && task.priority === filters.level;
+  // });
 
   // фильтр заданий по level
   // const changeLevelFilter = newLevel => {
@@ -144,7 +181,11 @@ export const App = () => {
 
   return (
     <StyledSection>
-      {/* <TaskForm onAdd={addTask} /> */}
+      <CreateNewBoard
+        newBoard={title}
+        addNewBoardName={createNewBoardName}
+        addBoard={addBoard}
+      />
       <SearchBar
         level={filters.level}
         task={filters.task}
@@ -153,20 +194,27 @@ export const App = () => {
       />
 
       <StyledListTasks>
-        {listItems.map(item => (
-          <StyledListItems key={item.id}>
+        {boardsItems.map(item => (
+          <StyledListItems key={item._id}>
             <ListHeader
-              header={item.name}
-              id={item.id}
-              onDeleteList={deleteList}
-              cardCount={visibleCards.length}
-            />
-            <BasicModal onAdd={addTask} />
+              header={item.title}
+              id={item._id}
+              onDeleteBoard={deleteBoard}
+              cardCount={item.tasks.length}
 
-            {/* если пустой массив то список карточек не рендерим  */}
+              // cardCount={visibleCards.length}
+            />
+            <BasicModal
+            //  onAdd={addTask}
+            />
+            <TaskCardList items={item.tasks} />
+            {/* если пустой массив то список карточек не рендерим 
             {visibleCards.length > 0 && (
-              <TaskCardList items={visibleCards} onDeleteCard={deleteTask} />
-            )}
+              <TaskCardList
+                items={visibleCards}
+                onDeleteCard={deleteTask}
+              />
+            )} */}
           </StyledListItems>
         ))}
       </StyledListTasks>

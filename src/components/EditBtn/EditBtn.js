@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 
 export default function BasicPopover({
   onDeleteCard,
-  onDeleteList,
+  onDeleteBoard,
   taskId,
   listId,
   contentType,
@@ -35,7 +35,7 @@ export default function BasicPopover({
         <>
           <button>edit</button>
           <button>add new card</button>
-          <button onClick={() => onDeleteList(listId)}>delete all</button>
+          <button onClick={() => onDeleteBoard(listId)}>delete board</button>
         </>
       );
     }

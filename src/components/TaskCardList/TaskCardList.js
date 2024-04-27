@@ -5,8 +5,11 @@ export const TaskCardList = ({ items, onDeleteCard }) => {
   return (
     <ul>
       {items.map(item => (
-        <StyledListItem key={item.id}>
-          <TaskCard task={item} onDeleteCard={onDeleteCard} />
+        <StyledListItem key={item._id}>
+          <TaskCard
+            task={item}
+            // onDeleteCard={onDeleteCard}
+          />
         </StyledListItem>
       ))}
     </ul>

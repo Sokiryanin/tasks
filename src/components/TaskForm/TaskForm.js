@@ -9,7 +9,7 @@ import {
 import * as Yup from 'yup';
 
 const taskSchema = Yup.object().shape({
-  name: Yup.string()
+  taskTitle: Yup.string()
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
@@ -17,32 +17,32 @@ const taskSchema = Yup.object().shape({
     .min(3, 'Too Short!')
     .max(100, 'Too Long!')
     .required('Required'),
-  date: Yup.date().required('Required'),
-  level: Yup.string().oneOf(['low', 'medium', 'high']).required('Required'),
+  deadline: Yup.date().required('Required'),
+  priority: Yup.string().oneOf(['low', 'medium', 'high']).required('Required'),
 });
 
-export const TaskForm = ({ onAdd }) => {
+export const TaskForm = ({ onAdd, listId, onCloseModal }) => {
   return (
     <>
       <Formik
         initialValues={{
-          name: '',
+          taskTitle: '',
           description: '',
-          date: '',
-          level: '',
+          deadline: '',
+          priority: '',
         }}
         validationSchema={taskSchema}
         onSubmit={(values, actions) => {
-          console.log(values.level);
-          onAdd(values);
+          onAdd(values, listId);
           actions.resetForm();
+          onCloseModal();
         }}
       >
         <StyledForm>
           <Label>
             Task name:
-            <Input name="name" type="text" />
-            <ErrorMsg name="name" component="div" />
+            <Input name="taskTitle" type="text" />
+            <ErrorMsg name="taskTitle" component="div" />
           </Label>
 
           <Label>
@@ -53,17 +53,17 @@ export const TaskForm = ({ onAdd }) => {
 
           <Label>
             Due date:
-            <Input name="date" type="date" />
-            <ErrorMsg name="date" component="div" />
+            <Input name="deadline" type="date" />
+            <ErrorMsg name="deadline" component="div" />
           </Label>
           <Label>
             Priority:
-            <Field as="select" name="level">
+            <Field as="select" name="priority">
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
             </Field>
-            <ErrorMsg name="level" component="div" />
+            <ErrorMsg name="priority" component="div" />
           </Label>
           <SubmitBtn type="submit">Add new card</SubmitBtn>
         </StyledForm>

@@ -5,7 +5,7 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { TaskCardList } from './TaskCardList/TaskCardList';
 import { ListHeader } from './ListHeader/ListHeader';
 import { StyledListItems, StyledListTasks, StyledSection } from './App.styled';
-import { createBoard, deleteBoardById, fetchBoards } from 'api';
+import { createBoard, createTask, deleteBoardById, fetchBoards } from 'api';
 import BasicModal from './Modal/Modal';
 
 import { CreateNewBoard } from './CreateNewBoard/CreateNewBoard';
@@ -66,13 +66,12 @@ export const App = () => {
       setError(false);
 
       const newBoard = { title, tasks: [] }; // Создаем объект новой доски
-
       const addedBoard = await createBoard(newBoard); // Отправляем запрос на сервер для создания новой доски
 
       if (title.length > 1) {
         setBoardsItems(prevBoardItems => [...prevBoardItems, addedBoard]);
         setTitle('');
-        toast.success('Successfully add board');
+        toast.success('Successfully added new board');
       }
     } catch (error) {
       setError(true);
@@ -81,16 +80,17 @@ export const App = () => {
     }
   };
 
-  // удаление доски
+  // удаление доскиx
   const deleteBoard = async listId => {
     try {
       setLoading(true);
       setError(false);
       await deleteBoardById(listId);
+
       setBoardsItems(prevItems =>
         prevItems.filter(list => list._id !== listId)
       );
-      toast.success('Successfully delete board');
+      toast.success('Successfully deleted board');
     } catch (error) {
       setError(true);
     } finally {
@@ -99,20 +99,32 @@ export const App = () => {
   };
 
   // добавление карточек
-  // const addTask = async newTask => {
-  //   try {
-  //     setLoading(true);
-  //     setError(false);
+  const addTask = async (newTask, listId) => {
+    try {
+      setLoading(true);
+      setError(false);
 
-  //     const addedTask = await createTask(newTask);
-  //     setBoardsItems(prevItems => [...prevItems, addedTask]);
-  //     toast.success('Successfully add task');
-  //   } catch (error) {
-  //     setError(true);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      await createTask(newTask, listId);
+
+      setBoardsItems(prevItems => {
+        return prevItems.map(board => {
+          if (board._id === listId) {
+            return {
+              ...board,
+              tasks: [...board.tasks, newTask], // Добавляем новую задачу в массив задач доски
+            };
+          } else {
+            return board;
+          }
+        });
+      });
+      toast.success('Successfully added new task');
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // удаление карточек
   // const deleteTask = async taskId => {
@@ -204,9 +216,7 @@ export const App = () => {
 
               // cardCount={visibleCards.length}
             />
-            <BasicModal
-            //  onAdd={addTask}
-            />
+            <BasicModal onAdd={addTask} id={item._id} />
             <TaskCardList items={item.tasks} />
             {/* если пустой массив то список карточек не рендерим 
             {visibleCards.length > 0 && (
@@ -222,7 +232,7 @@ export const App = () => {
 
       {/* если ошибка то показываем сообщение об ошибке */}
       {error && !loading && <div>Oops! There was an error! </div>}
-      <Toaster />
+      <Toaster position="bottom-center" reverseOrder={false} />
     </StyledSection>
   );
 };

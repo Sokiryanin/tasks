@@ -16,7 +16,7 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ onAdd }) {
+export default function BasicModal({ onAdd, id }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -26,7 +26,7 @@ export default function BasicModal({ onAdd }) {
       <StyledAddCardBtn onClick={handleOpen}>Add new card</StyledAddCardBtn>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <TaskForm onAdd={onAdd} />
+          <TaskForm onAdd={onAdd} listId={id} onCloseModal={handleClose} />
         </Box>
       </Modal>
     </div>

@@ -18,11 +18,10 @@ export const deleteBoardById = async listId => {
   return listId;
 };
 
-// export const createTask = async task => {
-//   /* что б записать новую таску нужно передать обьект, который
-//     приведется в JSON.stringify и т.д. */
-//   const resp = await axios.post('/boards', task);
-//   return resp.data;
-// };
+export const createTask = async (newTask, listId) => {
+  const resp = await axios.post(`/boards/${listId}/tasks`, newTask);
+
+  return resp.data;
+};
 
 

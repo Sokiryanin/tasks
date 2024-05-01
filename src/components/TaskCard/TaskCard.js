@@ -2,6 +2,7 @@ import BasicPopover from 'components/EditBtn/EditBtn';
 
 export const TaskCard = ({
   task: { _id, taskTitle, description, deadline, priority },
+  boardId,
   onDeleteCard,
 }) => {
   return (
@@ -10,8 +11,9 @@ export const TaskCard = ({
         <h3>{taskTitle}</h3>
         <BasicPopover
           contentType="card"
-          // onDeleteCard={onDeleteCard}
+          onDeleteCard={onDeleteCard}
           taskId={_id}
+          boardId={boardId}
         />
       </div>
       <div>

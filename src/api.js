@@ -20,7 +20,11 @@ export const deleteBoardById = async listId => {
 
 export const createTask = async (newTask, listId) => {
   const resp = await axios.post(`/boards/${listId}/tasks`, newTask);
+  return resp.data;
+};
 
+export const deleteTaskById = async (boardId, taskId) => {
+  const resp = await axios.delete(`/boards/${boardId}/tasks/${taskId}`);
   return resp.data;
 };
 

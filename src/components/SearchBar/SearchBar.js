@@ -1,18 +1,18 @@
 import { SearchBarWrapp } from './SearchBar.styled';
 
-export const SearchBar = ({ level, task, onChange, onReset }) => {
+export const SearchBar = ({ priority, taskTitle, onChange, onReset }) => {
   return (
     <SearchBarWrapp>
       <input
         type="text"
-        value={task}
+        value={taskTitle}
         placeholder="Task filter"
-        onChange={evt => onChange(evt.target.value, 'name')}
+        onChange={evt => onChange(evt.target.value, 'taskTitle')}
       />
       <select
-        value={level}
+        value={priority}
         onChange={evt => {
-          onChange(evt.target.value, 'level');
+          onChange(evt.target.value, 'priority');
         }}
       >
         <option value="all">All</option>

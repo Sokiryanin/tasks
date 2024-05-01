@@ -5,7 +5,13 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { TaskCardList } from './TaskCardList/TaskCardList';
 import { ListHeader } from './ListHeader/ListHeader';
 import { StyledListItems, StyledListTasks, StyledSection } from './App.styled';
-import { createBoard, createTask, deleteBoardById, fetchBoards } from 'api';
+import {
+  createBoard,
+  createTask,
+  deleteBoardById,
+  deleteTaskById,
+  fetchBoards,
+} from 'api';
 import BasicModal from './Modal/Modal';
 
 import { CreateNewBoard } from './CreateNewBoard/CreateNewBoard';
@@ -17,8 +23,8 @@ const getInitialFilters = () => {
     return JSON.parse(savedFilters);
   }
   return {
-    task: '',
-    level: 'all',
+    taskTitle: '',
+    priority: 'all',
   };
 };
 
@@ -44,16 +50,32 @@ export const App = () => {
         setLoading(false);
       }
     }
-
     getBoards();
   }, []);
 
-  // еффект который реагирует на изменения в фильтр
-  // сохраняет выставленные фильтры в localStorage
+  /* 
+  еффект который реагирует на изменения в фильтр
+  сохраняет выставленные фильтры в localStorage
+*/
 
   useEffect(() => {
     localStorage.setItem('filters', JSON.stringify(filters));
   }, [filters]);
+
+  const changeFilters = (value, key) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [key]: value,
+    }));
+  };
+
+  // сброс всех фильтров
+  const resetFilters = () => {
+    setFilters({
+      taskTitle: '',
+      priority: 'all',
+    });
+  };
 
   // Добавление новой доски
   const createNewBoardName = evt => {
@@ -80,7 +102,7 @@ export const App = () => {
     }
   };
 
-  // удаление доскиx
+  // удаление доски
   const deleteBoard = async listId => {
     try {
       setLoading(true);
@@ -104,20 +126,20 @@ export const App = () => {
       setLoading(true);
       setError(false);
 
-      await createTask(newTask, listId);
+      const addedTask = await createTask(newTask, listId);
 
-      setBoardsItems(prevItems => {
-        return prevItems.map(board => {
-          if (board._id === listId) {
-            return {
-              ...board,
-              tasks: [...board.tasks, newTask], // Добавляем новую задачу в массив задач доски
-            };
+      setBoardsItems(prevItems =>
+        prevItems.map(board => {
+          if (board._id === addedTask._id) {
+            // Если идентификаторы совпадают, заменяем доску на новую
+            return addedTask;
           } else {
+            // Возвращаем остальные доски без изменений
             return board;
           }
-        });
-      });
+        })
+      );
+
       toast.success('Successfully added new task');
     } catch (error) {
       setError(true);
@@ -127,69 +149,73 @@ export const App = () => {
   };
 
   // удаление карточек
-  // const deleteTask = async taskId => {
-  //   try {
-  //     setLoading(true);
-  //     setError(false);
+  const deleteTask = async (boardId, taskId) => {
+    try {
+      setLoading(true);
+      setError(false);
 
-  //     const deletedTask = await deleteBoardById(taskId);
-  //     setBoards(prevItems =>
-  //       prevItems.filter(task => task._id !== deletedTask.id)
-  //     );
+      const deletedTask = await deleteTaskById(boardId, taskId);
 
-  //     toast.success('Successfully delete task');
-  //   } catch (error) {
-  //     setError(true);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      setBoardsItems(prevItems =>
+        prevItems.map(board => {
+          if (board._id === deletedTask.boardId) {
+            // Возвращаем новый объект доски без удаленной задачи
+            return {
+              ...board,
+              tasks: board.tasks.filter(task => task._id !== taskId),
+            };
+          } else {
+            // Возвращаем остальные доски без изменений
+            return board;
+          }
+        })
+      );
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // отображает только те таски свойство name которых включают в себя введенный taskFilter,
-  // а так же возвращает те которые выбраны при помощи селект, изначально показывает все таски.
+  /*
+  отображает только те таски свойство taskTitle которых включают в себя введенный taskFilter,
+  а так же возвращает те которые выбраны при помощи селект, изначально показывает все таски.
+*/
+  const visibleCards = boardsItems.map(board => {
+    // Фильтруем задачи для текущей доски
+    const filteredTasks = board.tasks.filter(task => {
+      const hasTaskTitle = task.taskTitle
+        .toLowerCase()
+        .includes(filters.taskTitle.toLowerCase());
+      const isPriorityMatch =
+        filters.priority === 'all' || task.priority === filters.priority;
+      return hasTaskTitle && isPriorityMatch;
+    });
 
-  // const visibleCards = boards.filter(task => {
-  //   const hasName = task.taskTitle
-  //     .toLowerCase()
-  //     .includes(filters.task.toLocaleLowerCase());
+    // Возвращаем новый объект доски с отфильтрованными задачами
+    return {
+      ...board,
+      tasks: filteredTasks,
+    };
+  });
 
-  //   if (filters.level === 'all') {
-  //     return hasName;
-  //   }
-  //   return hasName && task.priority === filters.level;
-  // });
-
-  // фильтр заданий по level
-  // const changeLevelFilter = newLevel => {
-  //   setFilters(prevFilters => ({
-  //     ...prevFilters,
-  //     level: newLevel,
-  //   }));
-  // };
-
-  // фильтр по слову
-  // const changeTaskFilter = newTask => {
-  //   setFilters(prevFilters => ({
-  //     ...prevFilters,
-  //     task: newTask,
-  //   }));
-  // };
-
-  // Функция для фильтров. Сделал из двух одну
-  const changeFilters = (value, key) => {
+  /*
+     фильтр заданий по level
+  const changeLevelFilter = newLevel => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      [key]: value,
+      level: newLevel,
     }));
   };
 
-  // сброс всех фильтров
-  const resetFilters = () => {
-    setFilters({
-      task: '',
-      level: 'all',
-    });
+  фильтр по слову
+  const changeTaskFilter = newTask => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      task: newTask,
+    }));
   };
+   */
 
   return (
     <StyledSection>
@@ -199,32 +225,30 @@ export const App = () => {
         addBoard={addBoard}
       />
       <SearchBar
-        level={filters.level}
-        task={filters.task}
+        priority={filters.priority}
+        taskTitle={filters.taskTitle}
         onChange={changeFilters}
         onReset={resetFilters}
       />
 
       <StyledListTasks>
-        {boardsItems.map(item => (
+        {visibleCards.map(item => (
           <StyledListItems key={item._id}>
             <ListHeader
               header={item.title}
               id={item._id}
               onDeleteBoard={deleteBoard}
               cardCount={item.tasks.length}
-
-              // cardCount={visibleCards.length}
             />
             <BasicModal onAdd={addTask} id={item._id} />
-            <TaskCardList items={item.tasks} />
-            {/* если пустой массив то список карточек не рендерим 
+
             {visibleCards.length > 0 && (
               <TaskCardList
-                items={visibleCards}
+                items={item.tasks}
+                listId={item._id}
                 onDeleteCard={deleteTask}
               />
-            )} */}
+            )}
           </StyledListItems>
         ))}
       </StyledListTasks>

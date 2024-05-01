@@ -28,4 +28,12 @@ export const deleteTaskById = async (boardId, taskId) => {
   return resp.data;
 };
 
+export const updateTask = async (updatedTask, boardId, taskId) => {
+  const resp = await axios.put(
+    `/boards/${boardId}/tasks/${taskId}`,
+    updatedTask
+  );
+
+  return resp.data;
+};
 

@@ -4,6 +4,7 @@ export const TaskCard = ({
   task: { _id, taskTitle, description, deadline, priority },
   boardId,
   onDeleteCard,
+  onUpdateCard,
 }) => {
   return (
     <div>
@@ -14,6 +15,8 @@ export const TaskCard = ({
           onDeleteCard={onDeleteCard}
           taskId={_id}
           boardId={boardId}
+          onUpdateCard={onUpdateCard}
+          task={{ _id, taskTitle, description, deadline, priority }}
         />
       </div>
       <div>

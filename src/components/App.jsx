@@ -11,8 +11,8 @@ import {
   deleteBoardById,
   deleteTaskById,
   fetchBoards,
+  updateTask,
 } from 'api';
-import BasicModal from './Modal/Modal';
 
 import { CreateNewBoard } from './CreateNewBoard/CreateNewBoard';
 
@@ -54,9 +54,9 @@ export const App = () => {
   }, []);
 
   /* 
-  еффект который реагирует на изменения в фильтр
+  еффект который реагирует на изменения в фильтре и
   сохраняет выставленные фильтры в localStorage
-*/
+  */
 
   useEffect(() => {
     localStorage.setItem('filters', JSON.stringify(filters));
@@ -154,11 +154,13 @@ export const App = () => {
       setLoading(true);
       setError(false);
 
-      const deletedTask = await deleteTaskById(boardId, taskId);
+      // Удаление задачи из базы данных
+      await deleteTaskById(boardId, taskId);
 
+      // Обновление стейта после удаления задачи
       setBoardsItems(prevItems =>
         prevItems.map(board => {
-          if (board._id === deletedTask.boardId) {
+          if (board._id === boardId) {
             // Возвращаем новый объект доски без удаленной задачи
             return {
               ...board,
@@ -170,6 +172,36 @@ export const App = () => {
           }
         })
       );
+
+      toast.success('Successfully deleted task');
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+  // обновление карточки
+  const updateTaskById = async (updatedTask, boardId, taskId) => {
+    try {
+      setLoading(true);
+      setError(false);
+
+      // Отправляем запрос на сервер для обновления задачи
+      const updatedTaskData = await updateTask(updatedTask, boardId, taskId);
+
+      setBoardsItems(prevItems =>
+        prevItems.map(board => {
+          if (board._id === updatedTaskData._id) {
+            // Если идентификаторы совпадают, заменяем доску на новую
+            return updatedTaskData;
+          } else {
+            // Возвращаем остальные доски без изменений
+            return board;
+          }
+        })
+      );
+
+      toast.success('Successfully updated task');
     } catch (error) {
       setError(true);
     } finally {
@@ -239,14 +271,15 @@ export const App = () => {
               id={item._id}
               onDeleteBoard={deleteBoard}
               cardCount={item.tasks.length}
+              addTask={addTask}
             />
-            <BasicModal onAdd={addTask} id={item._id} />
 
             {visibleCards.length > 0 && (
               <TaskCardList
                 items={item.tasks}
                 listId={item._id}
                 onDeleteCard={deleteTask}
+                onUpdateCard={updateTaskById}
               />
             )}
           </StyledListItems>

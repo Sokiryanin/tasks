@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import BasicModal from 'components/Modal/Modal';
 
 export default function BasicPopover({
   onDeleteCard,
   onDeleteBoard,
+  onUpdateCard,
   taskId,
   listId,
   boardId,
   contentType,
+  task,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -50,13 +53,23 @@ export default function BasicPopover({
         <Typography sx={{ p: 2 }}>
           {contentType === 'card' && (
             <>
-              <button>edit</button>
+              <BasicModal
+                onUpdateCard={onUpdateCard}
+                contentType="edit"
+                taskId={taskId}
+                boardId={boardId}
+                initialValues={{
+                  taskTitle: task.taskTitle,
+                  description: task.description,
+                  deadline: task.deadline,
+                  priority: task.priority,
+                }}
+              />
               <button onClick={handleDelete}>delete card</button>
             </>
           )}
           {contentType === 'list' && (
             <>
-              <button>edit</button>
               <button>add new card</button>
               <button onClick={handleDelete}>delete board</button>
             </>

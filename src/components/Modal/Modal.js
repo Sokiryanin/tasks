@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { TaskForm } from 'components/TaskForm/TaskForm';
 import { StyledAddCardBtn } from './Modal.styled';
+import { UpdateTaskForm } from 'components/UpdateTaskForm/UpdateTaskForm';
 
 const style = {
   position: 'absolute',
@@ -16,19 +17,48 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ onAdd, id }) {
+export default function BasicModal({
+  onAdd,
+  id,
+  contentType,
+  boardId,
+  taskId,
+  onUpdateCard,
+  initialValues,
+}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  let modalContent;
+  const editCont = contentType === 'edit';
+  const addCont = contentType === 'add';
+
+  if (addCont) {
+    modalContent = (
+      <TaskForm onAdd={onAdd} listId={id} onCloseModal={handleClose} />
+    );
+  } else if (editCont) {
+    modalContent = (
+      <UpdateTaskForm
+        onUpdateCard={onUpdateCard}
+        boardId={boardId}
+        taskId={taskId}
+        onCloseModal={handleClose}
+        initialValues={initialValues}
+      />
+    );
+  }
+
   return (
-    <div>
-      <StyledAddCardBtn onClick={handleOpen}>Add new card</StyledAddCardBtn>
+    <>
+      {addCont && (
+        <StyledAddCardBtn onClick={handleOpen}>Add new card</StyledAddCardBtn>
+      )}
+      {editCont && <button onClick={handleOpen}>edit</button>}
       <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <TaskForm onAdd={onAdd} listId={id} onCloseModal={handleClose} />
-        </Box>
+        <Box sx={style}>{modalContent}</Box>
       </Modal>
-    </div>
+    </>
   );
 }

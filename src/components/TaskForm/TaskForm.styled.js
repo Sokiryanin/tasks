@@ -20,6 +20,9 @@ export const Input = styled(Field)`
   padding: 6px;
 `;
 
+export const Select = styled(Field)`
+  padding: 6px;
+`;
 
 export const SubmitBtn = styled.button`
   width: 100%;
@@ -31,4 +34,8 @@ export const SubmitBtn = styled.button`
 
 export const ErrorMsg = styled(ErrorMessage)`
   color: red;
+`;
+
+export const StyledSelect = styled.select`
+  padding: 6px;
 `;

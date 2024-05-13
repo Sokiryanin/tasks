@@ -37,3 +37,8 @@ export const updateTask = async (updatedTask, boardId, taskId) => {
   return resp.data;
 };
 
+export const fetchTaskById = async (boardId, taskId) => {
+  const resp = await axios.get(`/boards/${boardId}/tasks/${taskId}`);
+
+  return resp.data;
+};

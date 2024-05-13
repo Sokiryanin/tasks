@@ -36,7 +36,12 @@ export default function BasicModal({
 
   if (addCont) {
     modalContent = (
-      <TaskForm onAdd={onAdd} listId={id} onCloseModal={handleClose} />
+      <TaskForm
+        onAdd={onAdd}
+        listId={id}
+        onCloseModal={handleClose}
+        isModal={true}
+      />
     );
   } else if (editCont) {
     modalContent = (

@@ -17,7 +17,6 @@ export const Layout = () => {
           <Link to="/boards">Board list</Link>
         </Navi>
       </header>
-
       <Outlet />
     </Wrapper>
   );

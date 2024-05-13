@@ -5,7 +5,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function CreateTaskPage() {
-  const { boardsItems, setBoardsItems } = useBoardsContext();
+  const { boardsItems } = useBoardsContext();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);

@@ -82,6 +82,26 @@ export default function BoardsPage() {
   а так же возвращает те которые выбраны при помощи селект, изначально показывает все таски.
 */
 
+  // const visibleCards = () => {
+  //   return boardsItems.map(board => {
+  //     // Фильтруем задачи для текущей доски
+  //     const filteredTasks = board.tasks.filter(task => {
+  //       const hasTaskTitle = task.taskTitle
+  //         .toLowerCase()
+  //         .includes(filters.taskTitle.toLowerCase());
+  //       const isPriorityMatch =
+  //         filters.priority === 'all' || task.priority === filters.priority;
+  //       return hasTaskTitle && isPriorityMatch;
+  //     });
+
+  //     // Возвращаем новый объект доски с отфильтрованными задачами
+  //     return {
+  //       ...board,
+  //       tasks: filteredTasks,
+  //     };
+  //   });
+  // };
+
   const visibleCards = () => {
     return boardsItems.map(board => {
       // Фильтруем задачи для текущей доски

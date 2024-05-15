@@ -270,9 +270,8 @@ export default function BoardsPage() {
           </StyledListItems>
         ))}
       </StyledListTasks>
-      {loading && <div>LOADING...</div>}
+      {loading && <div>Loading.....</div>}
 
-      {/* если ошибка то показываем сообщение об ошибке */}
       {error && !loading && <div>Oops! There was an error! </div>}
     </div>
   );

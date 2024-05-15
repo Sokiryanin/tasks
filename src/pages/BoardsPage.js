@@ -81,15 +81,38 @@ export default function BoardsPage() {
   отображает только те таски свойство taskTitle которых включают в себя введенный taskFilter,
   а так же возвращает те которые выбраны при помощи селект, изначально показывает все таски.
 */
+  // const visibleCards = useMemo(() => {
+  //   return boardsItems.map(board => {
+  //     // Фильтруем задачи для текущей доски
+  //     const filteredTasks = board.tasks.filter(task => {
+  //       const hasTaskTitle = task.taskTitle
+  //         .toLowerCase()
+  //         .includes(filters.taskTitle.toLowerCase());
+  //       const isPriorityMatch =
+  //         filters.priority === 'all' || task.priority === filters.priority;
+  //       return hasTaskTitle && isPriorityMatch;
+  //     });
+
+  //     // Возвращаем новый объект доски с отфильтрованными задачами
+  //     return {
+  //       ...board,
+  //       tasks: filteredTasks,
+  //     };
+  //   });
+  // }, [boardsItems, filters]);
+
   const visibleCards = useMemo(() => {
     return boardsItems.map(board => {
       // Фильтруем задачи для текущей доски
       const filteredTasks = board.tasks.filter(task => {
-        const hasTaskTitle = task.taskTitle
-          .toLowerCase()
-          .includes(filters.taskTitle.toLowerCase());
+        const hasTaskTitle =
+          task.taskTitle &&
+          task.taskTitle
+            .toLowerCase()
+            .includes(filters.taskTitle.toLowerCase());
         const isPriorityMatch =
-          filters.priority === 'all' || task.priority === filters.priority;
+          filters.priority === 'all' ||
+          (task.priority && task.priority === filters.priority);
         return hasTaskTitle && isPriorityMatch;
       });
 

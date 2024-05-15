@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   createBoard,
   createTask,
@@ -82,18 +82,15 @@ export default function BoardsPage() {
   а так же возвращает те которые выбраны при помощи селект, изначально показывает все таски.
 */
 
-  const visibleCards = () => {
+  const visibleCards = useMemo(() => {
     return boardsItems.map(board => {
       // Фильтруем задачи для текущей доски
       const filteredTasks = board.tasks.filter(task => {
-        const hasTaskTitle =
-          task.taskTitle &&
-          task.taskTitle
-            .toLowerCase()
-            .includes(filters.taskTitle.toLowerCase());
+        const hasTaskTitle = task.taskTitle
+          .toLowerCase()
+          .includes(filters.taskTitle.toLowerCase());
         const isPriorityMatch =
-          filters.priority === 'all' ||
-          (task.priority && task.priority === filters.priority);
+          filters.priority === 'all' || task.priority === filters.priority;
         return hasTaskTitle && isPriorityMatch;
       });
 
@@ -103,7 +100,7 @@ export default function BoardsPage() {
         tasks: filteredTasks,
       };
     });
-  };
+  }, [boardsItems, filters]);
 
   // Добавление новой доски
   function createNewBoardName(evt) {

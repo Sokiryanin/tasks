@@ -123,6 +123,7 @@ export default function BoardsPage() {
       };
     });
   }, [boardsItems, filters]);
+  
 
   // Добавление новой доски
   const createNewBoardName = evt => {

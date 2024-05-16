@@ -3,7 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import BasicPopover from 'components/EditBtn/EditBtn';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function BasicCard({
   task: { _id, taskTitle, description, deadline, priority },
@@ -11,6 +11,8 @@ export default function BasicCard({
   onDeleteCard,
   onUpdateCard,
 }) {
+  const location = useLocation();
+
   return (
     <Card sx={{ width: '100%', backgroundColor: 'rgb(239, 239, 239)' }}>
       <CardContent>
@@ -22,7 +24,10 @@ export default function BasicCard({
           }}
           component="div"
         >
-          <Link to={`/boards/${boardId}/tasks/${_id}`}>
+          <Link
+            to={`/boards/${boardId}/tasks/${_id}`}
+            state={{ from: location }}
+          >
             <Typography
               sx={{
                 fontWeight: 700,

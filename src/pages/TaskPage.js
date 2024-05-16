@@ -1,6 +1,6 @@
 import { fetchTaskById } from 'api';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 function TaskPage() {
   const [task, setTask] = useState(null);
@@ -8,6 +8,7 @@ function TaskPage() {
   const [error, setError] = useState(false);
 
   const params = useParams();
+  const location = useLocation();
 
   useEffect(() => {
     async function fetchTasks() {
@@ -35,6 +36,8 @@ function TaskPage() {
           <p>{task.priority}</p>
         </div>
       )}
+
+      <Link to={location?.state?.from ?? '/boards'}>Back to boards</Link>
 
       {loading && <div>LOADING...</div>}
 

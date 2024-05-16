@@ -1,26 +1,16 @@
 import { SearchBarWrapp } from './SearchBar.styled';
+import { TaskTitleFilter } from 'components/TaskTitleFilter';
+import { PriorityFilter } from 'components/PriorityFilter';
+import { useFilterParams } from 'hooks/useFilterParams';
 
-export const SearchBar = ({ priority, taskTitle, onChange, onReset }) => {
+export const SearchBar = () => {
+  const { resetFilters } = useFilterParams();
+
   return (
     <SearchBarWrapp>
-      <input
-        type="text"
-        value={taskTitle}
-        placeholder="Task filter"
-        onChange={evt => onChange(evt.target.value, 'taskTitle')}
-      />
-      <select
-        value={priority}
-        onChange={evt => {
-          onChange(evt.target.value, 'priority');
-        }}
-      >
-        <option value="all">All</option>
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </select>
-      <button onClick={onReset}>Reset filters</button>
+      <TaskTitleFilter />
+      <PriorityFilter />
+      <button onClick={resetFilters}>Reset filters</button>
     </SearchBarWrapp>
   );
 };

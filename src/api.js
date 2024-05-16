@@ -1,12 +1,5 @@
 import axios from 'axios';
 
-// axios.defaults.baseURL = 'https://task-back-c189.onrender.com/api';
-
-// export const fetchBoards = async () => {
-//   const resp = await axios.get('/boards');
-//   return resp.data;
-// };
-
 axios.defaults.baseURL = 'https://task-back-c189.onrender.com/api';
 
 export const fetchBoards = async () => {
